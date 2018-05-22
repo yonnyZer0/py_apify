@@ -1,3 +1,5 @@
+# -*- coding: utf-8 -*-
+
 import os, json, sys
 from time import sleep
 import gzip
@@ -38,7 +40,7 @@ class ApifyClient(object):
         
         if type( values ) is dict or type( values ) is list:
             values = str( json.dumps( values ) ).encode()
-        elif type( values ) is str:
+        elif type( values ) is str and disable_body_parser == 0:
             values = values.encode()
             
         req = u2.Request( url, data=values, headers=headers)    
@@ -97,9 +99,8 @@ class ApifyClient(object):
     def __init__(self, options={}):
         
         # detects and imports all APIFY env variables
-        for env in ['APIFY_ACT_ID', 'APIFY_ACT_RUN_ID', 'APIFY_USER_ID', 'APIFY_TOKEN', 'APIFY_STARTED_AT', 'APIFY_TIMEOUT_AT', 'APIFY_DEFAULT_KEY_VALUE_STORE_ID', 'APIFY_DEFAULT_DATASET_ID', 'APIFY_WATCH_FILE', 'APIFY_HEADLESS', 'APIFY_MEMORY_MBYTES']:
-            if env in os.environ:
-                self.options[ env ] = os.environ.get( env )
+        for env in os.environ:
+            self.options[ env ] = os.environ.get( env )
         
         if 'APIFY_DEFAULT_KEY_VALUE_STORE_ID' in self.options:
             self.options['storeId'] = self.options['APIFY_DEFAULT_KEY_VALUE_STORE_ID']
